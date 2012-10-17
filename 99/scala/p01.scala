@@ -8,6 +8,6 @@ package object lists {
   def last[T](list: List[T]): T = list match {
     case Nil => throw new Exception("last of empty list")
     case x :: Nil => x
-    case x :: xs => last(xs)
+    case _ :: xs => last(xs)
   }
 }
