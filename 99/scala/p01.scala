@@ -10,4 +10,6 @@ package object p01 {
     case x :: Nil => x
     case _ :: xs => last(xs)
   }
+  
+  def last2[T](list: List[T]) = list.last
 }
