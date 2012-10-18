@@ -44,7 +44,7 @@ class List
 
     i = args.length - 1
     while i >= 0
-      ls = Cons.new(args[i], ls)
+      ls = ls << args[i]
       i -= 1
     end
 
