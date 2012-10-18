@@ -10,4 +10,6 @@ package object p02 {
     case x :: y :: Nil => x
     case _ :: xs => penultimate(xs)
   }
+  
+  def penultimate2[T](list: List[T]) = list.init.last
 }
