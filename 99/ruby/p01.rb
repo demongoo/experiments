@@ -19,7 +19,7 @@ class List
   def self.last2(ls)
     if ls.empty? then raise "Last of empty list" end
     
-    while !ls.tail.empty? do ls = ls.tail end
+    until ls.tail.empty? do ls = ls.tail end
     ls.head
   end
 end
