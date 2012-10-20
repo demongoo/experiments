@@ -22,6 +22,9 @@ class List
     until ls.tail.tail.empty? do ls = ls.tail end
     ls.head
   end
+
+  # array
+  def self.penultimate3(ls); ls.to_a.fetch(-2) end
 end
 
 #test
@@ -32,5 +35,6 @@ class Tests
     puts ls
     puts List.penultimate ls
     puts List.penultimate2 ls
+    puts List.penultimate3 ls
   end
 end

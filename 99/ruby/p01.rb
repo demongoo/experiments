@@ -22,6 +22,9 @@ class List
     until ls.tail.empty? do ls = ls.tail end
     ls.head
   end
+
+  # through array (dirty)
+  def self.last3(ls); ls.to_a.last end
 end
 
 #test
@@ -32,5 +35,6 @@ class Tests
     puts ls
     puts List.last ls
     puts List.last2 ls
+    puts List.last3 ls
   end
 end
