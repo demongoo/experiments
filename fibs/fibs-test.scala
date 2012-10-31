@@ -19,6 +19,7 @@ object FiboTest extends App {
   println("Loop 0.." + max + ": " + fmt(test(0, max)(loop)))
   println("Rounding 0.." + max + ": " + fmt(test(0, max)(rounding)))
   println("Binet 0.." + max + ": " + fmt(test(0, max)(binet)))
+  println("Stream 0.." + max + ": " + fmt(test(0, max)(stream)))
   println("Recursive 0.." + math.min(max, 40) + ": " + fmt(test(0, math.min(max, 40))(recursive)))
 }
 

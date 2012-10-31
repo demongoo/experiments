@@ -41,7 +41,6 @@ object Fibonacci {
     }
   }
   
-  
   lazy val sqrt5 = sqrt(5)
   lazy val phi: Double = (1 + sqrt5) / 2
   lazy val psi: Double = (1 - sqrt5) / 2
@@ -65,4 +64,9 @@ object Fibonacci {
    * @return nth fibonacci number
    */
   def binet(n: Int): Long = ((pow(phi, n) - pow(psi, n)) / sqrt5).toLong
+  
+  /**
+   * Stream, mindblowing...
+   */
+   lazy val stream: Stream[Long] = 0 #:: 1 #:: stream.zip(stream.tail).map { n => n._1 + n._2 } 
 }
