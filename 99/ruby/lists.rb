@@ -4,6 +4,7 @@
 #   List[1,2,3,4,5]
 #   List[] (would equal Nil.instance)
 #   ls = List[]; ls = ls << "String" << "More" (would be List[More, String])
+#   ls = List[]; ls = ls >> "String" >> "More" (would be List[String, More])
 
 require "singleton"
 
@@ -31,6 +32,23 @@ class List
   # add element (prepend)
   def <<(elem)
     Cons.new(elem, self)
+  end
+
+  # add element (append)
+  def >>(elem)
+    # assuming the list is immutable copy needed
+    nls = Nil.instance
+    last = Cons.new(elem, Nil.instance)
+    # recursive from the end
+    step = lambda { |xs|
+      if xs.empty?
+        last
+      else
+        step.call(xs.tail) << xs.head
+      end
+    }
+    # run
+    step.call(self)
   end
 
   # to string
