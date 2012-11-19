@@ -2,11 +2,9 @@
 #
 # Examples:
 #   List[1,2,3,4,5]
-#   List[] (would equal Nil.instance)
+#   List[] (would equal Nil)
 #   ls = List[]; ls = ls << "String" << "More" (would be List[More, String])
 #   ls = List[]; ls = ls >> "String" >> "More" (would be List[String, More])
-
-require "singleton"
 
 class List
   include Enumerable
@@ -37,8 +35,8 @@ class List
   # add element (append)
   def >>(elem)
     # assuming the list is immutable copy needed
-    nls = Nil.instance
-    last = Cons.new(elem, Nil.instance)
+    nls = Nil
+    last = Cons.new(elem, Nil)
     # recursive from the end
     step = lambda { |xs|
       if xs.empty?
@@ -58,7 +56,7 @@ class List
 
   # static factory to create lists
   def self.[](*args)
-    ls = Nil.instance
+    ls = Nil
 
     i = args.length - 1
     while i >= 0
@@ -82,9 +80,8 @@ class Cons < List
 end
 
 # Nil element (Empty list)
-class Nil < List
-  include Singleton
-
+Nil = List.new
+class << Nil
   def head; raise "Head of empty List" end
   def tail; raise "Tail of empty List" end
   def empty?; true end

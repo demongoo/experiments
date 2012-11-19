@@ -6,7 +6,7 @@ require_relative "lists.rb"
 class List
   # by going to end and constructing in reverse order
   def self.reverse(ls)
-    reversed = Nil.instance
+    reversed = Nil
     ls.each do |el|
       reversed = reversed << el
     end
