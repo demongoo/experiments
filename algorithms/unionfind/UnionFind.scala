@@ -1,14 +1,11 @@
 /** Union Find algorithms */
 package algo.unionfind
 
+import algo.utils._
+
 trait UnionFind {
   def connected(p: Int, q: Int): Boolean
   def union(p: Int, q: Int): this.type
-}
-
-trait Printable {
-  this: UnionFind =>
-  def print()
 }
 
 /** Quick-Find version of Union-Find:
@@ -72,7 +69,7 @@ class QuickUnion(n: Int) extends UnionFind with Printable {
   * @param n Number of nodes
   */
 class WeightedQuickUnion(n: Int) extends QuickUnion(n) {
-  val sz = Array.fill(n)(0)
+  val sz = Array.fill(n)(1)
 
   override def union(p: Int, q: Int) = {
     val (i, j) = (root(p), root(q))
