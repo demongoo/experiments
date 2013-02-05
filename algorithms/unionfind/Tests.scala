@@ -1,6 +1,7 @@
 package algo.unionfind
 
 import algo.utils._
+import io.Source
 
 object Tests {
   val algos = List("quick-find", "quick-union", "weighted quick-union", "path compression quick-union", "path compression weighted quick-union")
@@ -14,47 +15,79 @@ object Tests {
     case "path compression weighted quick-union" => new PathCompressionWeightedQuickUnion(n)
   }
 
-  /** generate simulation data: number of elements, number of unions, number of tests for connection */
-  case class Simulation(n: Int, nu: Int, nc: Int) {
+  /** Simulation of a data for unions */
+  trait Simulation {
+    /** number of elements */
+    val n: Int
 
-    val unions = rseq(nu)
-    val contests = rseq(nc)
+    /** source of p & q */
+    val unions: { def toIterator: Iterator[(Int, Int)] }
 
-    private def rseq(num: Int) = Seq.fill(nu)((util.Random.nextInt(n), util.Random.nextInt(n)))
+    /** does initialization of simulation: rewinds iterators, etc */
+    def init()
 
-    def apply(name: String): (Long, Seq[Boolean]) = {
+    /** run round of simulation */
+    def apply(name: String): Long = {
+      init()
       val uf = factory(name)(n)
       ∮ {
-        unions foreach { case (p, q) => uf union (p, q) }
-        contests map { case (p, q) => uf connected (p, q) }
-      }
+        unions.toIterator foreach {
+          case (p, q) => if (!uf.connected(p, q)) uf.union(p, q)
+        }
+      } _1
     }
   }
-  object Simulation {
-    def apply(n: Int): Simulation = Simulation(n, (n * 0.5).toInt, (n * 0.5).toInt)
-    def apply(n: Int, nu: Int): Simulation = Simulation(n, nu, (n * 0.5).toInt)
+
+  /** Random simulation */
+  case class RandomSimulation(n: Int, nu: Int) extends Simulation {
+    /** random data, although generated once to be consistent in all tests */
+    val unions = Seq.fill(nu)((util.Random.nextInt(n), util.Random.nextInt(n)))
+
+    /** init is nothing (just funny to return parenthesis :)) */
+    def init() = ()
   }
 
-  /** do the tests for each algorithm on the same n sized simulation */
-  def apply(n: Int)(nu: Int = (n * 0.5).toInt, nc: Int = (n * 0.5).toInt) {
-    println("<< Union-Find (" + n + ") >>\n")
+  /** Simulation using data from file */
+  case class FileSimulation(name: String) extends Simulation {
+    /** first line in file is n */
+    val n = (Source.fromFile(name).getLines take 1).toList.head.toInt
 
-    val sim = Simulation(n)
-    val results = algos map { alg =>
-      sim(alg) match {
-        case (time, res) =>
-          println(alg + ": " + (time ms))
-          (alg, time, res)
-      }
+    /** next lines are pairs */
+    val unions = (Source.fromFile(name).getLines drop 1) map {
+      s => val Array(p, q) = s.trim.split(' ') map (_.toInt); (p, q)
+    } toSeq
+
+    /** init is nothing (just funny to return parenthesis :)) */
+    def init() = ()
+  }
+
+
+  /** run random simulation */
+  def random(n: Int, nu: Int, skip: List[String] = Nil) {
+    println("<< Union-Find (" + n + ", " + nu + ", random) >>\n")
+    simulation(RandomSimulation(n, nu), skip)
+  }
+
+
+  /** run simulation from file data */
+  def file(fname: String, skip: List[String] = Nil) {
+    val fsize = new java.io.File(fname).length
+    println("<< Union-Find (" + fname + ", " + (fsize / 1000) + " kbytes) >>\n")
+    simulation(FileSimulation(fname), skip)
+  }
+
+  /** simulation process */
+  private def simulation(sim: Simulation, skip: List[String] = Nil) {
+    val results = algos filterNot { skip contains _ } map { alg =>
+      val time = sim(alg)
+      println(alg + ": " + (time ms))
+      (alg, time)
     }
 
     // ranking by performance
     println("\nPerformance ranking:")
     results sortBy { _._2 } foreach {
-      case (alg, time, _) => println(alg + ": " + (time ms))
+      case (alg, time) => println(alg + ": " + (time ms))
     }
-
-    val errors = sim.contests zip (results map { _._3 } transpose) filter { case (_, xs) => xs.exists(_ != xs.head) }
-    if (errors != Nil) println("Errors in connected", errors)
   }
 }
