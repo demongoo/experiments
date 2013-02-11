@@ -4,11 +4,13 @@ import algo.utils._
 import io.Source
 
 object Tests {
-  def quicksort[T : ClassManifest : Ordering](n: Int, gen: =>T) {
+  def quicksort[T : ClassManifest : Ordering](n: Int, gen: =>T): Long = {
     val arr = Array.fill(n)(gen)
     printArray(arr)
-    new QuickSort(arr) sort()
+    val (t, _) = ∮ { new QuickSort(arr) sort() }
     printArray(arr)
+
+    t
   }
 
   def printArray[T](seq: Array[T]) {
