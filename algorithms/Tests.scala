@@ -1,5 +1,6 @@
 package algo
 import utils._
+import gt.coalitional.Game
 
 object Tests extends App {
   // test case for union-finds
@@ -19,18 +20,17 @@ object Tests extends App {
   println(t / qsortApprox(N))
   */
 
-  import gt.coalitions._
+  import gt.coalitional._
 
-  new Shapley(2) {
+  new Game(2) {
     v(1) = 0
     v(2) = 2
     v(1,2) = 2
 
-    println(ϕ(1))
-    println(ϕ(2))
+    println((1 to N) map ϕ)
   }
 
-  new Shapley(3) {
+  new Game(3) {
     v(1) = 0
     v(2) = 0
     v(3) = 0
@@ -39,7 +39,34 @@ object Tests extends App {
     v(2,3) = 70
     v(1,2,3) = 120
 
-    // 45, 40, 35
-    println(ϕόλα())
+    // Shapley value: 45, 40, 35
+    println((1 to N) map ϕ)
   }
+
+  new Game(3) {
+    v(S) = {
+      case s: Coalition if s.contains(1) && s.size >= 2 => 1
+      case _ => 0
+    }: PayoffFunction
+
+    // Shapley value: 2/3, 1/6, 1/6
+    println((1 to N) map ϕ)
+  }
+
+  /*
+  new Game(3) {
+    val c = 1
+    val w1 = 2
+    val w2 = 3
+
+    v(S) = {
+      case s: Coalition if (Set(c, w1) &~ s).isEmpty => 3
+      case s: Coalition if (Set(c, w2) &~ s).isEmpty => 3
+      case s: Coalition if (Set(c, w2, w2) &~ s).isEmpty => 4
+      case _ => 0
+    }: PayoffFunction
+
+    println((1 to N) map ϕ)
+  }
+  */
 }
