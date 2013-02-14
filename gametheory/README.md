@@ -1,5 +1,7 @@
 Some stuff for solving games from Game Theory
 
+Honestly I did it to understand what the hell is the core, and because I like to program, especially in Scala.
+
 ## Coalitional games
 Coalitional games are represented by (N, v), where
 * `N` - set of players,

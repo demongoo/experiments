@@ -64,8 +64,8 @@ abstract class GameDefinition(val N: Int) {
     def update(s: S.type, pf: PayoffFunction) { payoffFunctions += pf }
 
     /** value of payoff specified by sequence of players or set */
-    def apply(p: Int*) = payoffs(p.toSet)
-    def apply(p: Coalition) = payoffs(p)
+    def apply(p: Int*): Payoff = (payoffs orElse this(S)) (p.toSet)
+    def apply(p: Coalition): Payoff = (payoffs orElse this(S)) (p)
 
     /** returns partial function chain of payoff functions */
     def apply(s: S.type) = (payoffFunctions foldLeft undefined) { (acc, pf) => acc orElse pf }
@@ -156,14 +156,9 @@ trait ShapleyValue { this: GameDefinition =>
    * @return Player's payoff
    */
   def shapleyValue(i: Int): Double = {
-    /** gets payoff for coalition */
-    def payoff(s: Coalition): Double =
-      try { v(s) }
-      catch { case _: Exception => v(S)(s) }
-
     // iterate through all subsets of 1..N without player i
     val sums = for (s <- (SN - i).subsets) yield {
-      Math.fact(s.size) * Math.fact(N - s.size - 1) * (payoff(s + i) - payoff(s))
+      Math.fact(s.size) * Math.fact(N - s.size - 1) * (v(s + i) - v(s))
     }
 
     (sums foldLeft 0.0) { _ + _ } / Math.fact(N)
@@ -186,16 +181,22 @@ trait TheCore { this: GameDefinition =>
    */
   def isInCore(x: Seq[Payoff]): Boolean = {
     import Math._
-    val sx = x.sum
 
     x.size == N &&
-    (sx ~= v(SN)) &&
-    SN.subsets.forall { sx ~>= v(_) }
+    (x.sum ~= v(SN)) &&
+    SN.subsets.forall {
+      s => (s.toList map { i => x(i - 1) }).sum ~>= v(s)
+    }
   }
+
+  /**
+   * Alias with vararg
+   */
+  def isInCore(x: Payoff*)(implicit d: DummyImplicit): Boolean = isInCore(x)
 }
 
 
-/** Full featured coalitional game */
-class Game(N: Int) extends GameDefinition(N)
+/** Full featured coalitional game, but should be defined of course */
+abstract class Game(N: Int) extends GameDefinition(N)
   with ShapleyValue
   with TheCore
