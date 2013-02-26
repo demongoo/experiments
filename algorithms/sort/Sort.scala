@@ -4,8 +4,8 @@ package algo.sort
 import algo.utils._
 
 /** just obliges class to do sorting on mutable sequence */
-trait Sort[T] {
-  val seq: Array[T]
+abstract class Sort[T: Ordering](val seq: Array[T]) {
+  val ord = implicitly[Ordering[T]]
   def sort(): Array[T]
 
   @inline protected def swap(i: Int, j: Int) {
@@ -48,12 +48,12 @@ object Sort {
  * Selection sort (N^2/2, N^2/2, N^2/2) compares and N exchanges
  * @param seq Array
  */
-class SelectionSort[T : Ordering](val seq: Array[T]) extends Sort[T] {
+class SelectionSort[T : Ordering](seq: Array[T]) extends Sort[T](seq) {
   def sort() = {
     for (i <- 0 until seq.length) {
       var min = i
       for (j <- (i + 1) until seq.length) {
-        if (implicitly[Ordering[T]].lt(seq(j), seq(min))) min = j
+        if (ord.lt(seq(j), seq(min))) min = j
       }
       swap(i, min)
     }
@@ -67,11 +67,11 @@ class SelectionSort[T : Ordering](val seq: Array[T]) extends Sort[T] {
  * Insertion sort (N^2/2, N^2/4, N) compares and ~N^2/4 exchanges
  * @param seq Array
  */
-class InsertionSort[T : Ordering](val seq: Array[T]) extends Sort[T] {
+class InsertionSort[T : Ordering](seq: Array[T]) extends Sort[T](seq) {
   def sort() = {
     for (i <- 0 until seq.length) {
       var j = i
-      while (j > 0 && implicitly[Ordering[T]].lt(seq(j), seq(j - 1))) {
+      while (j > 0 && ord.lt(seq(j), seq(j - 1))) {
         swap(j, j - 1)
         j -= 1
       }
@@ -86,7 +86,7 @@ class InsertionSort[T : Ordering](val seq: Array[T]) extends Sort[T] {
  * Shell sort (?, ?, N) compares
  * @param seq Array
  */
-class ShellSort[T : Ordering](val seq: Array[T]) extends Sort[T] {
+class ShellSort[T : Ordering](seq: Array[T]) extends Sort[T](seq) {
   def sort() = {
     val N = seq.length
     var h = 1
@@ -96,7 +96,7 @@ class ShellSort[T : Ordering](val seq: Array[T]) extends Sort[T] {
     while (h >= 1) {
       for (i <- h until N) {
         var j = i
-        while (j >= h && implicitly[Ordering[T]].lt(seq(j), seq(j - h))) {
+        while (j >= h && ord.lt(seq(j), seq(j - h))) {
           swap(j, j - h)
           j -= h
         }
@@ -114,7 +114,7 @@ class ShellSort[T : Ordering](val seq: Array[T]) extends Sort[T] {
  * Merge sort (N lg N, N lg N, N lg N) compares, stable
  * @param seq Array
  */
-class MergeSort[T : Ordering : ClassManifest](val seq: Array[T]) extends Sort[T] {
+class MergeSort[T : Ordering : ClassManifest](seq: Array[T]) extends Sort[T](seq) {
   protected val aux = new Array[T](seq.length)
 
   def sort() = {
@@ -138,7 +138,7 @@ class MergeSort[T : Ordering : ClassManifest](val seq: Array[T]) extends Sort[T]
     for (k <- lo to hi) {
       if (i > mid) { seq(k) = aux(j); j += 1 }
       else if (j > hi) { seq(k) = aux(i); i += 1 }
-      else if (implicitly[Ordering[T]].lt(aux(j), aux(i))) { seq(k) = aux(j); j += 1 }
+      else if (ord.lt(aux(j), aux(i))) { seq(k) = aux(j); j += 1 }
       else { seq(k) = aux(i); i += 1 }
     }
   }
@@ -167,42 +167,67 @@ class BottomUpMergeSort[T : Ordering : ClassManifest](seq: Array[T]) extends Mer
 }
 
 
-/** Straight Quick Sort
-  * @param seq Array
-  */
+/**
+ * Quick sort (N^2/2, 2NlnN, NlgN) compares
+ * @param seq Array
+ */
+class QuickSort[T : Ordering](seq: Array[T]) extends Sort[T](seq) {
+  def sort() = {
+    Sort.shuffle(seq)
+    qsort(0, seq.length - 1)
+    seq
+  }
 
-//class QuickSort[T](seq: Array[T])(implicit ord: Ordering[T]) extends Sort[T] {
-//  /* entry point */
-//  def sort() = {
-//    qsort(0, seq.length - 1)
-//    seq
-//  }
-//
-//  /* actual quick sort procedure */
-//  protected def qsort(lo: Int, hi: Int) {
-//    if (hi > lo) {
-//      val j = partition(lo, hi)
-//      qsort(lo, j - 1)
-//      qsort(j + 1, hi)
-//    }
-//  }
-//
-//  protected def partition(lo: Int, hi: Int): Int = {
-//    import util.control.Breaks._
-//
-//    def swap(x: Int, y: Int) { val t = seq(x); seq(x) = seq(y); seq(y) = t }
-//
-//    var (i, j) = (lo + 1, hi)
-//    breakable {
-//      while (true) {
-//        while (ord.lteq(seq(i), seq(lo))) { if (i == hi) break(); i += 1 }
-//        while (ord.lt(seq(lo), seq(j))) { if (j == lo) break(); j -= 1 }
-//        if (i >= j) break()
-//        swap(i, j)
-//      }
-//    }
-//
-//    swap(lo, j)
-//    j
-//  }
-//}
+  protected def qsort(lo: Int, hi: Int) {
+    if (hi > lo) {
+      val j = partition(lo, hi)
+      qsort(lo, j - 1)
+      qsort(j + 1, hi)
+    }
+  }
+
+  protected def partition(lo: Int, hi: Int): Int = {
+    var i = lo
+    var j = hi + 1
+
+    do {
+      while ({ i += 1; ord.lt(seq(i), seq(lo)) && i != hi }) {}
+      while ({ j -= 1; ord.lt(seq(lo), seq(j)) && j != lo }) {}
+      if (i < j) swap(i, j)
+    } while (i < j)
+
+    swap(lo, j)
+    j
+  }
+}
+
+
+/**
+ * Three way quick-sort (Dijkstra) (N^2/2, 2NlnN, N) compares
+ * @param seq Array
+ */
+class ThreeWayQuickSort[T : Ordering](seq: Array[T]) extends Sort[T](seq) {
+  def sort() = {
+    Sort.shuffle(seq)
+    sort(0, seq.length - 1)
+    seq
+  }
+
+  protected def sort(lo: Int, hi: Int) {
+    if (hi > lo) {
+      var lt = lo
+      var gt = hi
+      val v = seq(lo)
+      var i = lo
+      while (i <= gt) {
+        val cmp = ord.compare(seq(i), v)
+        if (cmp < 0) { swap(lt, i); lt += 1; i += 1 }
+        else if (cmp > 0) { swap(i, gt); gt -= 1 }
+        else i += 1
+      }
+
+      sort(lo, lt - 1)
+      sort(gt + 1, hi)
+    }
+  }
+}

@@ -3,7 +3,7 @@ package algo.sort
 import algo.utils._
 
 object Tests {
-  val algos = List("selection", "insertion", "shell", "merge", "bottom-up merge")
+  val algos = List("selection", "insertion", "shell", "merge", "bottom-up merge", "quick", "3-way quick")
 
   /** instantiates union factory */
   def factory[T : Ordering : ClassManifest](name: String)(data: Array[T]): Sort[T] = name match {
@@ -12,6 +12,8 @@ object Tests {
     case "shell" => new ShellSort(data)
     case "merge" => new MergeSort(data)
     case "bottom-up merge" => new BottomUpMergeSort(data)
+    case "quick" => new QuickSort(data)
+    case "3-way quick" => new ThreeWayQuickSort(data)
   }
 
   /** Simulation of a data for sorts */
@@ -26,9 +28,11 @@ object Tests {
     def apply(name: String): Long = {
       val copy = array.clone()
       val sort = factory(name)(copy)
-      ∮ {
+      val (res, _) = ∮ {
         sort.sort()
-      } _1
+      }
+      assert(Sort.isSorted(copy))
+      res
     }
   }
 
@@ -38,11 +42,22 @@ object Tests {
     val array = Array.fill(n)(util.Random.nextInt(maxnum))
   }
 
+  /** Predefined data simulation */
+  case class DataSimulation(array: Array[Int]) extends Simulation {
+    val n = array.length
+  }
+
 
   /** run random simulation */
   def random(n: Int, max: Int = Int.MaxValue, skip: List[String] = Nil) {
     println("<< Sort (" + n + ", < " + max + ", random) >>\n")
     simulation(RandomSimulation(n, max), skip)
+  }
+
+  /** run random simulation */
+  def data(array: Array[Int], msg: String = "", skip: List[String] = Nil) {
+    println("<< Data simulation (" + array.length + ", " + msg + ") >>\n")
+    simulation(DataSimulation(array), skip)
   }
 
   /** simulation process */
