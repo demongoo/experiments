@@ -29,96 +29,102 @@ should say, whether we have a path, connecting two given nodes.
 # Sort
 Plain old sorting algorithms.
 
-## Using random data, N=100, No value limit
-* shell: 2,00 ms
-* bottom-up merge: 2,00 ms
-* merge: 4,00 ms
-* insertion: 4,00 ms
-* 3-way quick: 14,00 ms
-* quick: 28,00 ms
-* selection: 65,00 ms
-
-Clearly seen which algorithm has much overhead. Except selection, it's just slow.
-
 ## Using random data, N=1000, No value limit
-* 3-way quick: 3,00 ms
-* bottom-up merge: 19,00 ms
-* shell: 20,00 ms
-* merge: 25,00 ms
-* quick: 36,00 ms
-* insertion: 49,00 ms
-* selection: 113,00 ms
+* quick: 0.89 ms
+* 3-way quick: 1.05 ms
+* shell: 1.17 ms
+* heap: 1.21 ms
+* bottom-up merge: 1.30 ms
+* merge: 1.75 ms
+* insertion: 21.53 ms
+* selection: 31.71 ms
 
 ## Using random data, N=100000, No value limit
-* 3-way quick: 152,00 ms
-* bottom-up merge: 183,00 ms
-* quick: 238,00 ms
-* shell: 279,00 ms
-* merge: 299,00 ms
-* selection: 181940,00 ms
-* insertion: 185905,00 ms
+* quick: 114 ms
+* 3-way quick: 162 ms
+* heap: 194 ms
+* bottom-up merge: 212 ms
+* merge: 216 ms
+* shell: 277 ms
+* insertion: 187691 ms
+* selection: 209767 ms
 
-## Using random data, N=100000, Max=50000 (means that ~2 duplicates for each key)
-* 3-way quick: 134,00 ms
-* bottom-up merge: 179,00 ms
-* quick: 191,00 ms
-* shell: 272,00 ms
-* merge: 300,00 ms
-* selection: 183698,00 ms
-* insertion: 183954,00 ms
+## Using random data, N=100000, Max=50000 (~2 duplicates for each key)
+* 3-way quick: 149 ms
+* bottom-up merge: 188 ms
+* heap: 191 ms
+* merge: 201 ms
+* quick: 206 ms
+* shell: 278 ms
+* insertion: 186661 ms
+* selection: 208374 ms
 
-## Using random data, N=100000, Max=10000 (means that ~10 duplicates for each key)
-* 3-way quick: 123,00 ms
-* bottom-up merge: 181,00 ms
-* quick: 199,00 ms
-* shell: 268,00 ms
-* merge: 300,00 ms
-* selection: 185104,00 ms
-* insertion: 185363,00 ms
+## Using random data, N=100000, Max=10000 (~10 duplicates for each key)
+* quick: 113 ms
+* 3-way quick: 133 ms
+* bottom-up merge: 181 ms
+* heap: 193 ms
+* merge: 202 ms
+* shell: 257 ms
+* insertion: 185974 ms
+* selection: 208700 ms
 
-## Using random data, N=100000, Max=100 (means that ~1000 duplicates for each key)
-* 3-way quick: 56,00 ms
-* shell: 129,00 ms
-* bottom-up merge: 157,00 ms
-* quick: 266,00 ms
-* merge: 279,00 ms
-* selection: 156062,00 ms
-* insertion: 156903,00 ms
-
-Seems just my laptop had sped up :)
+## Using random data, N=100000, Max=100 ( ~1000 duplicates for each key)
+* 3-way quick: 53 ms
+* quick: 85 ms
+* shell: 101 ms
+* heap: 140 ms
+* bottom-up merge: 155 ms
+* merge: 182 ms
+* insertion: 153643 ms
+* selection: 175898 ms
 
 ## Using presorted array, N=100000, no duplicates
-* insertion: 14,00 ms
-* shell: 57,00 ms
-* bottom-up merge: 193,00 ms
-* 3-way quick: 201,00 ms
-* quick: 281,00 ms
-* merge: 302,00 ms
-* selection: 219002,00 ms
+* insertion: 3 ms
+* shell: 35 ms
+* quick: 114 ms
+* 3-way quick: 156 ms
+* heap: 178 ms
+* bottom-up merge: 181 ms
+* merge: 192 ms
+* selection: 206238 ms
 
 ## Using reversed array, N=100000, no duplicates
-* shell: 95,00 ms (why ?!)
-* bottom-up merge: 166,00 ms
-* 3-way quick: 183,00 ms
-* quick: 226,00 ms
-* merge: 253,00 ms
-* selection: 186045,00 ms
-* insertion: 383335,00 ms
+* shell: 86 ms
+* quick: 115 ms
+* 3-way quick: 152 ms
+* heap: 163 ms
+* merge: 174 ms
+* bottom-up merge: 178 ms
+* selection: 211727 ms
+* insertion: 374394 ms (worst case)
 
 ## Using array of ones, N=100000
-* shell: 95,00 ms (why ?!)
-* bottom-up merge: 166,00 ms
-* 3-way quick: 183,00 ms
-* quick: 226,00 ms
-* merge: 253,00 ms
-* selection: 186045,00 ms
-* insertion: 383335,00 ms
+* insertion: 3 ms
+* heap: 11 ms
+* 3-way quick: 21 ms
+* shell: 27 ms
+* quick: 87 ms
+* bottom-up merge: 131 ms
+* merge: 158 ms
+* selection: 177962 ms
 
 ## Using array of 1,2,1,2..., N=100000
-* 3-way quick: 38,00 ms
-* shell: 50,00 ms
-* bottom-up merge: 148,00 ms
-* quick: 197,00 ms
-* merge: 284,00 ms
-* insertion: 83461,00 ms
-* selection: 141924,00 ms
+* 3-way quick: 23 ms
+* shell: 39 ms
+* heap: 81 ms
+* quick: 89 ms
+* bottom-up merge: 169 ms
+* merge: 178 ms
+* insertion: 79034 ms
+* selection: 175025 ms
+
+## Using random data, N=5000000, No value limit
+* bottom-up merge: 12849 ms
+* merge: 12875 ms
+* quick: 14976 ms
+* 3-way quick: 16871 ms
+* heap: 17044 ms
+* shell: 36395 ms
+* insertion: ... (still running)
+* selection: ... (still running) :)

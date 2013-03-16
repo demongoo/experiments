@@ -231,3 +231,32 @@ class ThreeWayQuickSort[T : Ordering](seq: Array[T]) extends Sort[T](seq) {
     }
   }
 }
+
+
+/**
+ * heap sort (2NlnN, 2NlnN, NlnN) compares
+ * @param seq Array
+ */
+class HeapSort[T : Ordering](seq: Array[T]) extends Sort[T](seq) {
+  def sort() = {
+    var N = seq.length
+    for (k <- N/2 to 1 by -1) sink(k, N)
+    while (N > 1) {
+      swap(0, N - 1)
+      N -= 1
+      sink(1, N)
+    }
+    seq
+  }
+
+  protected def sink(x: Int, N: Int) {
+    var k = x
+    while (2 * k <= N) {
+      var j = 2 * k
+      if (j < N && ord.lt(seq(j - 1), seq(j))) j += 1
+      if (!ord.lt(seq(k - 1), seq(j - 1))) { return }
+      swap(k - 1, j - 1)
+      k = j
+    }
+  }
+}

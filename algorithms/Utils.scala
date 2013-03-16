@@ -15,8 +15,8 @@ package object utils {
 
   /** format nanotime to micro seconds */
   class TimeFormatting(ns: Long) {
-    def µs = "%.2f".format((ns / 1000).toDouble) + " µs"
-    def ms = "%.2f".format((ns / 1000000).toDouble) + " ms"
+    def µs = "%.2f".format(ns.toDouble / 1000) + " µs"
+    def ms = "%.2f".format(ns.toDouble / 1000000) + " ms"
   }
 
   implicit def long2tf(i: Long) = new TimeFormatting(i)

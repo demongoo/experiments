@@ -10,7 +10,6 @@ object Tests extends App {
   */
 
   /*
-  sort.Tests.random(100)
   sort.Tests.random(1000)
   sort.Tests.random(100000)
   sort.Tests.random(100000, 50000)

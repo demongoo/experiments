@@ -3,7 +3,7 @@ package algo.sort
 import algo.utils._
 
 object Tests {
-  val algos = List("selection", "insertion", "shell", "merge", "bottom-up merge", "quick", "3-way quick")
+  val algos = List("selection", "insertion", "shell", "merge", "bottom-up merge", "quick", "3-way quick", "heap")
 
   /** instantiates union factory */
   def factory[T : Ordering : ClassManifest](name: String)(data: Array[T]): Sort[T] = name match {
@@ -14,6 +14,7 @@ object Tests {
     case "bottom-up merge" => new BottomUpMergeSort(data)
     case "quick" => new QuickSort(data)
     case "3-way quick" => new ThreeWayQuickSort(data)
+    case "heap" => new HeapSort(data)
   }
 
   /** Simulation of a data for sorts */
