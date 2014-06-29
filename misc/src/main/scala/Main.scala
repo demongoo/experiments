@@ -1,5 +1,6 @@
 import classcheck._
 import categories._
+import typeclasses._
 
 object Main extends App {
   def classChecking(): Unit = {
@@ -42,4 +43,23 @@ object Main extends App {
   type |->[A, B] = PartialFunction[A, B]
   val b: Int |-> String = { case 1 => "Hello" }
   println(Try(b(1)), Try(b(2)))
+
+  def typeClasses(): Unit = {
+    println(sigma(0, 10, _ + 1, identity[Int]))
+    println(sigma(0, 10, _ + 1, _.toString()))
+
+    implicit def listMonoid[T] = new ListMonoid[T]
+    println(sigma(0, 10, _ + 1, (_: Int) :: Nil))
+    println(sigma(0, 10, _ + 1, i => (i.toString + ":") :: Nil))
+
+    implicit val funMonoid = new Monoid[Int => Int] {
+      override def mempty: (Int) => Int = identity[Int]
+      override def mappend(a1: (Int) => Int, a2: (Int) => Int): (Int) => Int = a1 compose a2
+    }
+
+    val fm = sigma(0, 10, _ + 1, i => (j: Int) => j + i)
+    println(fm(0), fm(5))
+  }
+
+  typeClasses()
 }
