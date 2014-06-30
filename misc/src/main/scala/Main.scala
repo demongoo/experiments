@@ -62,4 +62,19 @@ object Main extends App {
   }
 
   typeClasses()
+
+  def monoids(): Unit = {
+    import monoid._
+    val products = List(
+      OrderLine("p1", 2, 120.5),
+      OrderLine("p2", 10, 78.78),
+      OrderLine("p3", 8, 34)
+    )
+
+    def total(products: Seq[OrderLine]) = products.fold(OrderLineMonoid.zero)(OrderLineMonoid.op)
+
+    println(total(products))
+  }
+
+  monoids()
 }
